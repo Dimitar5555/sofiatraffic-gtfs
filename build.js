@@ -8,6 +8,12 @@ const GTFSTypes = {
 	'trolleybus': 11,
 	'autobus': 3
 };
+const BGTypes = {
+	'metro': 'Метролиния',
+	'tramway': 'Трамвай',
+	'trolleybus': 'Тролейбус',
+	'autobus': 'Автобус'
+};
 const GTFSConsts = {
 	agency: {
 		name: 'Център за градска мобилност',
@@ -46,9 +52,9 @@ if (!fs.existsSync(outDir)){
 getJSON('stops.json')
 .then(data => {
 	let stops_data = [];
-	stops_data.push(['agency_id', 'stop_id', 'stop_name', 'stop_lat', 'stop_lon']);
+	stops_data.push(['stop_id', 'stop_name', 'stop_lat', 'stop_lon']);
 	data.forEach(stop => {
-		stops_data.push([1, stop.code, stop.names.bg.indexOf(',')!=-1?`"${stop.names.bg}"`:stop.names.bg, stop.coords[0], stop.coords[1]]);
+		stops_data.push([stop.code, stop.names.bg.indexOf(',')!=-1?`"${stop.names.bg}"`:stop.names.bg, stop.coords[0], stop.coords[1]]);
 	});
 	saveToFile('stops', stops_data);
 });
@@ -56,9 +62,9 @@ getJSON('stops.json')
 getJSON('routes.json')
 .then(data => {
 	let routes_data = [];
-	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_type']);
+	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type']);
 	data.forEach((route, index) => {
-		routes_data.push([1, index+1, route.line, GTFSTypes[route.type]]);
+		routes_data.push([1, index+1, route.line, `${BGTypes[route.type]} ${route.line}`, GTFSTypes[route.type]]);
 	});
 	saveToFile('routes', routes_data);
 });
