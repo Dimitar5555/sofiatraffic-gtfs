@@ -29,6 +29,5 @@ jobs:
       with:
         message: 'Update GTFS files'
         add: '*.csv'
-        remove: '.result/*'
-        cwd: 'result/'
+        cwd: '.'
         pull: '--rebase --autostash'
