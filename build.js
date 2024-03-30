@@ -84,11 +84,13 @@ promises.push(
 		return getJSON('stop_times.json');
 	})
 	.then(data => {
-		let last_trip = 0;
-		let stop_times_data = [];
-		trips_data.push(['route_id', 'service_id', 'trip_id']);
 		let trips_data = [];
+		trips_data.push(['route_id', 'service_id', 'trip_id']);
+		
+		let stop_times_data = [];
 		stop_times_data.push(['trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence']);
+		
+		let last_trip = 0;
 		data.forEach(stop_times => {
 			last_trip++;
 			trips_data.push([trips[stop_times.trip].route_index+1, 1, last_trip]);
