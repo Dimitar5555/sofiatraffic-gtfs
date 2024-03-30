@@ -123,6 +123,7 @@ promises.push(
 	promises.push(saveToFile('calendar', calendar));
 }
 
+promises.push(new Promise(resolve => setTimeout(resolve, 20*1000)))
 Promise.all(promises)
 .then(() => {
 	zipper.sync.zip("./result/").compress().save("result.zip");
