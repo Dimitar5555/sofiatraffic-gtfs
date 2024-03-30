@@ -33,7 +33,7 @@ getJSON('stops.json')
 	let stops_data = [];
 	stops_data.push(['stop_id', 'stop_name', 'stop_lat', 'stop_lon']);
 	data.forEach(stop => {
-		stops_data.push([stop.names.bg.indexOf(',')!=-1?`"${stop.names.bg}"`:stop.names.bg, stop.code, stop.coords[0], stop.coords[1]]);
+		stops_data.push([stop.code, stop.names.bg.indexOf(',')!=-1?`"${stop.names.bg}"`:stop.names.bg, stop.coords[0], stop.coords[1]]);
 	});
 	fs.writeFileSync(`${outDir}/stops.csv`, arrayToCSV(stops_data));
 });
