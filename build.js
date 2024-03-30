@@ -117,6 +117,6 @@ Promise.all(local_promises)
 	let calendar = [];
 	calendar.push(['service_id', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date']);
 	let year = new Date().getFullYear();
-	calendar.push([1, 1, 1, 1, 1, 1, 1, 1, `${year}-01-01`, `${year}-12-31`]);
+	calendar.push([1, 1, 1, 1, 1, 1, 1, 1, `${year}0101`, `${year}1231`]);
 	saveToFile('calendar', calendar);
 }
