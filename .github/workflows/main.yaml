@@ -31,4 +31,4 @@ jobs:
         git config --global user.name "GitHub Actions"
         git add .
         git commit -m "Update GTFS data"
-        git push origin main
+        git push origin master
