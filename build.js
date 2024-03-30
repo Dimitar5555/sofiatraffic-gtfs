@@ -65,7 +65,7 @@ getJSON('directions.json')
 });
 getJSON('stop_times.json')
 .then(data => {
-	let last_trip = 1;
+	let last_trip = 0;
 	let stop_times_data = [];
 	let trips_data = [];
 	trips_data.push(['route_id', 'service_id', 'trip_id']);
