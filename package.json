@@ -1,5 +1,5 @@
 {
-  "name": "sofiatraffig-gtfs",
+  "name": "sofiatraffic-gtfs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
