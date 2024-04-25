@@ -14,6 +14,12 @@ const BGTypes = {
 	'trolleybus': 'Тролейбус',
 	'autobus': 'Автобус'
 };
+const ENShortTypes = {
+	"metro": "",
+	"tramway": "ТМ",
+	"trolleybus": "ТБ",
+	"autobus": "А"
+};
 const GTFSConsts = {
 	agency: {
 		name: 'Център за градска мобилност',
@@ -64,7 +70,7 @@ getJSON('routes.json')
 	let routes_data = [];
 	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type']);
 	data.forEach((route, index) => {
-		routes_data.push([1, index+1, route.line, `${BGTypes[route.type]} ${route.line}`, GTFSTypes[route.type]]);
+		routes_data.push([1, ENShortTypes[route.type]+route.line, route.line, `${BGTypes[route.type]} ${route.line}`, GTFSTypes[route.type]]);
 	});
 	saveToFile('routes', routes_data);
 });
@@ -103,7 +109,7 @@ Promise.all(local_promises)
 	saveToFile('stop_times', stop_times_data);
 })
 .finally(() => {
-	console.log('Almost done');	
+	console.log('Almost done, zipping files.');
 	zipper.sync.zip("./result/").compress().save("result.zip");
 	console.log('Zipped data to result.zip');
 })
