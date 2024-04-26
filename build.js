@@ -14,7 +14,7 @@ const BGTypes = {
 	'trolleybus': 'Тролейбус',
 	'autobus': 'Автобус'
 };
-const ENShortTypes = {
+const BGShortTypes = {
 	"metro": "",
 	"tramway": "ТМ",
 	"trolleybus": "ТБ",
@@ -67,10 +67,11 @@ getJSON('stops.json')
 
 getJSON('routes.json')
 .then(data => {
+	routes = data;
 	let routes_data = [];
 	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type']);
 	data.forEach((route, index) => {
-		routes_data.push([1, ENShortTypes[route.type]+route.line, route.line, `${BGTypes[route.type]} ${route.line}`, GTFSTypes[route.type]]);
+		routes_data.push([1, BGShortTypes[route.type]+route.line, route.line, `${BGTypes[route.type]} ${route.line}`, GTFSTypes[route.type]]);
 	});
 	saveToFile('routes', routes_data);
 });
@@ -98,7 +99,12 @@ Promise.all(local_promises)
 	let last_trip = 0;
 	data.forEach(stop_times => {
 		last_trip++;
-		trips_data.push([trips[stop_times.trip].route_index+1, 1, last_trip]);
+		let route = routes[trips[stop_times.trip].route_index];
+		if(!route){
+			return;
+		}
+		let route_id = BGShortTypes[route.type]+route.line;
+		trips_data.push([route_id, 1, last_trip]);
 		let stops = directions.find(dir => dir.code==trips[stop_times.trip].direction).stops;
 		stop_times.times.forEach((stop_time, index) => {
 			stop_times_data.push([last_trip, minsToTime(stop_time), minsToTime(stop_time), stops[index], index+1]);
