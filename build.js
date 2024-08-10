@@ -4,21 +4,21 @@ const repo = 'https://raw.githubusercontent.com/Dimitar5555/sofiatraffic-schedul
 const outDir = './result';
 const GTFSTypes = {
 	'metro': 1,
-	'tramway': 0,
-	'trolleybus': 11,
-	'autobus': 3
+	'tram': 0,
+	'trolley': 11,
+	'bus': 3
 };
 const BGTypes = {
 	'metro': 'Метролиния',
-	'tramway': 'Трамвай',
-	'trolleybus': 'Тролейбус',
-	'autobus': 'Автобус'
+	'tram': 'Трамвай',
+	'trolley': 'Тролейбус',
+	'bus': 'Автобус'
 };
 const BGShortTypes = {
 	"metro": "",
-	"tramway": "ТМ",
-	"trolleybus": "ТБ",
-	"autobus": "А"
+	"tram": "ТМ",
+	"trolley": "ТБ",
+	"bus": "А"
 };
 const GTFSConsts = {
 	agency: {
@@ -29,29 +29,30 @@ const GTFSConsts = {
 	lang: 'bg'
 }
 
-function getJSON(file){
+function getJSON(file) {
 	return fetch(repo+file)
 	.then(response => response.json());
 }
 
-function arrayToCSV(array){
+function arrayToCSV(array) {
+	console.log(array.filter(ar => ar.includes(undefined)))
 	return array.map(row => row.map(cell => cell.toString()).join(',')).join('\n');
 }
 
-function minsToTime(mins){
+function minsToTime(mins) {
 	let hour = Math.floor(mins/60).toString().padStart(2, '0');
 	let min = (mins%60).toString().padStart(2, '0');
 	let secs = '00';
 	return `${hour}:${min}:${secs}`
 }
 
-function saveToFile(name, data){
+function saveToFile(name, data) {
 	let path = `${outDir}/${name}.txt`;
 	fs.writeFileSync(path, arrayToCSV(data));
 	console.log(`Done writing to ${path}`);
 }
 
-if (!fs.existsSync(outDir)){
+if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir);
 }
 
@@ -105,8 +106,11 @@ Promise.all(local_promises)
 		}
 		let route_id = BGShortTypes[route.type]+route.line;
 		trips_data.push([route_id, 1, last_trip]);
-		let stops = directions.find(dir => dir.code==trips[stop_times.trip].direction).stops;
+		let stops = directions.find(dir => dir.code === trips[stop_times.trip].direction).stops;
 		stop_times.times.forEach((stop_time, index) => {
+			if(stops.length<index+1){
+				return;
+			}
 			stop_times_data.push([last_trip, minsToTime(stop_time), minsToTime(stop_time), stops[index], index+1]);
 		});
 	});
@@ -138,3 +142,4 @@ Promise.all(local_promises)
 	calendar.push([1, 1, 1, 1, 1, 1, 1, 1, `${year}0101`, `${year}1231`]);
 	saveToFile('calendar', calendar);
 }
+
