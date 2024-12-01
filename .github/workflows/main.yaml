@@ -1,6 +1,8 @@
 name: Node.js Build and Push
 
 on:
+  schedule:
+    - cron: '0 12 * * 0'
   workflow_dispatch:
   push:
     branches:
