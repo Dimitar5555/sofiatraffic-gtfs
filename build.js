@@ -72,7 +72,7 @@ getJSON('routes.json')
 	let routes_data = [];
 	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type']);
 	data.forEach((route, index) => {
-		routes_data.push([1, BGShortTypes[route.type]+route.line, route.line, `${BGTypes[route.type]} ${route.line}`, GTFSTypes[route.type]]);
+		routes_data.push([1, BGShortTypes[route.type]+route.route_ref, route.route_ref, `${BGTypes[route.type]} ${route.route_ref}`, GTFSTypes[route.type]]);
 	});
 	saveToFile('routes', routes_data);
 });
