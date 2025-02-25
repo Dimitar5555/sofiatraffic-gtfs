@@ -104,7 +104,7 @@ Promise.all(local_promises)
 		if(!route){
 			return;
 		}
-		let route_id = BGShortTypes[route.type]+route.line;
+		const route_id = `${BGShortTypes[route.type]}${route.route_ref}`;
 		trips_data.push([route_id, 1, last_trip]);
 		let stops = directions.find(dir => dir.code === trips[stop_times.trip].direction).stops;
 		stop_times.times.forEach((stop_time, index) => {
