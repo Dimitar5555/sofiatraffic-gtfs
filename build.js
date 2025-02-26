@@ -48,7 +48,7 @@ function minsToTime(mins) {
 
 function saveToFile(name, data) {
 	let path = `${outDir}/${name}.txt`;
-	fs.writeFileSync(path, arrayToCSV(data));
+	fs.writeFileSync(path, arrayToCSV(data) + '\n');
 	console.log(`Done writing to ${path}`);
 }
 
