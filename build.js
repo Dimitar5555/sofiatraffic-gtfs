@@ -1,5 +1,6 @@
-const fs = require('fs');
-const zipper = require('zip-local');
+import fs from 'fs';
+import zipper from 'zip-local';
+
 const repo = 'https://raw.githubusercontent.com/Dimitar5555/sofiatraffic-schedules/master/docs/data/';
 const outDir = './result';
 const GTFSTypes = {

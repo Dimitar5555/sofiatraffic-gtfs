@@ -11,7 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "fs": "^0.0.1-security",
     "zip-local": "^0.3.5"
-  }
+  },
+  "type": "module"
 }
