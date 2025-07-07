@@ -65,17 +65,18 @@ getJSON('stops.json')
 		stops_data.push([stop.code, stop.names.bg.indexOf(',')!=-1?`"${stop.names.bg}"`:stop.names.bg, stop.coords[0], stop.coords[1]]);
 	});
 	saveToFile('stops', stops_data);
+	return data;
 });
 
-getJSON('routes.json')
+const routes = await getJSON('routes.json')
 .then(data => {
-	routes = data;
 	let routes_data = [];
 	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type']);
 	data.forEach((route, index) => {
 		routes_data.push([1, BGShortTypes[route.type]+route.route_ref, route.route_ref, `${BGTypes[route.type]} ${route.route_ref}`, GTFSTypes[route.type]]);
 	});
 	saveToFile('routes', routes_data);
+	return data;
 });
 
 
@@ -108,9 +109,16 @@ Promise.all(local_promises)
 		const route_id = `${BGShortTypes[route.type]}${route.route_ref}`;
 		trips_data.push([route_id, 1, last_trip]);
 		let stops = directions.find(dir => dir.code === trips[stop_times.trip].direction).stops;
+		const startTime = stop_times.times[0];
 		stop_times.times.forEach((stop_time, index) => {
+			if(typeof stop_time !== 'number') {
+				return;
+			}
 			if(stops.length<index+1){
 				return;
+			}
+			if(startTime > stop_time) {
+				stop_time += 24*60;
 			}
 			stop_times_data.push([last_trip, minsToTime(stop_time), minsToTime(stop_time), stops[index], index+1]);
 		});
