@@ -89,9 +89,9 @@ local_promises.push(getJSON('stop_times.json'));
 
 Promise.all(local_promises)
 .then((datas) => {
-	var trips = datas[0]
-	var directions = datas[1];
-	var data = datas[2];
+	const trips = datas[0];
+	const directions = datas[1];
+	const all_stop_times = datas[2];
 	
 	let trips_data = [];
 	trips_data.push(['route_id', 'service_id', 'trip_id']);
@@ -99,17 +99,19 @@ Promise.all(local_promises)
 	let stop_times_data = [];
 	stop_times_data.push(['trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence']);
 	
-	let last_trip = 0;
-	data.forEach(stop_times => {
-		last_trip++;
-		let route = routes[trips[stop_times.trip].route_index];
+	let trip_counter = 0;
+	all_stop_times.forEach(stop_times => {
+		trip_counter++;
+		const route = routes[trips[stop_times.trip].route_index];
 		if(!route){
 			return;
 		}
 		const route_id = `${BGShortTypes[route.type]}${route.route_ref}`;
-		trips_data.push([route_id, 1, last_trip]);
-		let stops = directions.find(dir => dir.code === trips[stop_times.trip].direction).stops;
-		const startTime = stop_times.times[0];
+		const calendar_val = trips[stop_times.trip].is_weekend ? 2 : 1;
+		trips_data.push([route_id, calendar_val, trip_counter]);
+		const stops = directions.find(dir => dir.code === trips[stop_times.trip].direction).stops;
+		const startTime = stop_times.times.find(time => typeof time === 'number');
+		const times_to_commit = [];
 		stop_times.times.forEach((stop_time, index) => {
 			if(typeof stop_time !== 'number') {
 				return;
@@ -120,7 +122,24 @@ Promise.all(local_promises)
 			if(startTime > stop_time) {
 				stop_time += 24*60;
 			}
-			stop_times_data.push([last_trip, minsToTime(stop_time), minsToTime(stop_time), stops[index], index+1]);
+			times_to_commit.push([trip_counter, stop_time, stop_time, stops[index], index+1]);
+		});
+		for(let i = 1; i < times_to_commit.length-1; i++) {
+			const prev = times_to_commit[i-1][1];
+			const curr = times_to_commit[i][1];
+			const next = times_to_commit[i+1][1];
+			if(prev < curr && next < curr) {
+				times_to_commit[i][1] = next;
+				times_to_commit[i][2] = next;
+
+				times_to_commit[i+1][1] = curr;
+				times_to_commit[i+1][2] = curr;
+			}
+		}
+		times_to_commit.forEach(time => {
+			time[1] = minsToTime(time[1]);
+			time[2] = minsToTime(time[2]);
+			stop_times_data.push(time);
 		});
 	});
 
@@ -148,7 +167,8 @@ Promise.all(local_promises)
 	let calendar = [];
 	calendar.push(['service_id', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', 'start_date', 'end_date']);
 	let year = new Date().getFullYear();
-	calendar.push([1, 1, 1, 1, 1, 1, 1, 1, `${year}0101`, `${year}1231`]);
+	calendar.push([1, 1, 1, 1, 1, 1, 0, 0, `${year}0101`, `${year}1231`]);
+	calendar.push([2, 0, 0, 0, 0, 0, 1, 1, `${year}0101`, `${year}1231`]);
 	saveToFile('calendar', calendar);
 }
 
