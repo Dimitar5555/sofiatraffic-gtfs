@@ -28,7 +28,27 @@ const GTFSConsts = {
 	},
 	timezone: 'Europe/Sofia',
 	lang: 'bg'
-}
+};
+const RouteColors = {
+	'M1': 'EC2029',
+	'M2': '1077BC',
+	'M3': '3BB44B',
+	'M4': 'FCD403',
+
+	'tram': 'F6921E',
+	'trolley': '0095DA',
+	'bus': 'BE1E2D',
+};
+const RouteTextColors = {
+	'M1': 'FFFFFF',
+	'M2': 'FFFFFF',
+	'M3': 'FFFFFF',
+	'M4': '000000',
+
+	'tram': 'FFFFFF',
+	'trolley': 'FFFFFF',
+	'bus': 'FFFFFF',
+};
 
 function getJSON(file) {
 	return fetch(repo+file)
@@ -76,9 +96,17 @@ getJSON('stops.json')
 const routes = await getJSON('routes.json')
 .then(data => {
 	let routes_data = [];
-	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type']);
+	routes_data.push(['agency_id', 'route_id', 'route_short_name', 'route_long_name', 'route_type', 'route_text_color', 'route_color']);
 	data.forEach((route, index) => {
-		routes_data.push([1, BGShortTypes[route.type]+route.route_ref, route.route_ref, `${BGTypes[route.type]} ${route.route_ref}`, GTFSTypes[route.type]]);
+		const agency_id = 1;
+		const route_id = `${BGShortTypes[route.type]}${route.route_ref}`;
+		const route_short_name = route.route_ref;
+		const route_long_name = `${BGTypes[route.type]} ${route.route_ref}`;
+		const route_type = GTFSTypes[route.type];
+		const route_text_color = RouteTextColors[route.type == 'metro' ? route.route_ref : route.type];
+		const route_color = RouteColors[route.type == 'metro' ? route.route_ref : route.type];
+
+		routes_data.push([agency_id, route_id, route_short_name, route_long_name, route_type, route_text_color, route_color]);
 	});
 	saveToFile('routes', routes_data);
 	return data;
