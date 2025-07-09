@@ -62,7 +62,12 @@ getJSON('stops.json')
 	let stops_data = [];
 	stops_data.push(['stop_id', 'stop_name', 'stop_lat', 'stop_lon']);
 	data.forEach(stop => {
-		stops_data.push([stop.code, stop.names.bg.indexOf(',')!=-1?`"${stop.names.bg}"`:stop.names.bg, stop.coords[0], stop.coords[1]]);
+		const stop_code = stop.code;
+		const name = stop.names.bg.includes(',') ? `"${stop.names.bg}"` : stop.names.bg;
+		const lat = stop.coords[0];
+		const lon = stop.coords[1];
+		
+		stops_data.push([stop_code, name, lat, lon]);
 	});
 	saveToFile('stops', stops_data);
 	return data;
