@@ -1,4 +1,4 @@
-name: Node.js Build and Push
+name: Build GTFS files
 
 on:
   schedule:
